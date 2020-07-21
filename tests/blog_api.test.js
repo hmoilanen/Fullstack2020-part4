@@ -22,7 +22,14 @@ describe('about blogs', () => {
 			.expect(200)
 			.expect('Content-Type', /application\/json/)
 	
-		expect(res.body).toHaveLength(3)
+		expect(res.body).toHaveLength(helper.initialBlogs.length)
+	})
+
+	test('verify the unique identifier of blog being named as id, not _id', async () => {
+		const blog = await Blog.findOne({})
+
+		expect(blog.toJSON().id).toBeDefined()
+		expect(blog.toJSON()._id).not.toBeDefined()
 	})
 })
 
