@@ -1,5 +1,5 @@
 const dummy = (blogs) => {
-	//console.log('dummy - blogs:', blogs)
+	console.log('dummy - blogs:', blogs)
 	return 1
 }
 
@@ -15,7 +15,7 @@ const totalLikes = (blogs) => {
 
 const favouriteBlog = (blogs) => {
 	const compareLikes = (prev, current) => {
-		if (+current.likes > +prev.likes) {
+		if (current.likes > prev.likes) {
 			return current
 		} else {
 			return prev

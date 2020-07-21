@@ -14,7 +14,7 @@ POST http://localhost:3003/api/blogs HTTP/1.1
 Content-Type: application/json
 
 {
-  "title": "Blogin nimi",
+  "title": "XXXblogin nimiXXX",
   "author": "Bloggaajan nimi",
   "url": "www.urli.com",
   "likes": 0

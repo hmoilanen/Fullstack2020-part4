@@ -1,0 +1,3 @@
+Skipped excercises:
+-4.6
+-4.7
