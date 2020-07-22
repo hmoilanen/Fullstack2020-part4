@@ -53,7 +53,7 @@ describe('about blogs', () => {
 		expect(titles).toContain(newBlog.title)
 	})
 
-	test('verifying that if blog is missing likes property, it\'ll default to value 0', async () => {
+	test('if blog is missing likes property, it\'ll default to value 0', async () => {
 		const newBlogWithoutLikes = {
 			title: 'Blog title!',
 			author: 'Blog author!',
@@ -97,6 +97,25 @@ describe('about blogs', () => {
 
 		expect(blogsAfterDelete).toHaveLength(allBlogs.length - 1)
 
+	})
+
+	test('confirm all properties of blog are updated successfully in db', async () => {
+		let blogToUpdate = await (await Blog.findOne({ title: helper.initialBlogs[0].title })).toJSON()
+		const propertiesToUpdate = {
+			title: blogToUpdate.title + '-UPDATED',
+			author: blogToUpdate.author + '-UPDATED',
+			url: blogToUpdate.url + '-UPDATED',
+			likes: blogToUpdate.likes++
+		}
+		
+		const updatedBlog = await api
+			.put(`/api/blogs/${blogToUpdate.id}`)
+			.send(propertiesToUpdate)
+			.expect(200)
+
+		for (const key in propertiesToUpdate) {
+			expect(updatedBlog.body[key]).toBe(propertiesToUpdate[key])
+		}
 	})
 })
 
