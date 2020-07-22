@@ -41,7 +41,7 @@ describe('about blogs', () => {
 		}
 
 		await api
-			.post('/api/blogs', )
+			.post('/api/blogs')
 			.send(newBlog)
 			.expect(201)
 			.expect('Content-Type', /application\/json/)
@@ -51,6 +51,27 @@ describe('about blogs', () => {
 
 		expect(titles).toHaveLength(helper.initialBlogs.length + 1)
 		expect(titles).toContain(newBlog.title)
+	})
+
+	test('verifying that if blog is missing likes property, it\'ll default to value 0', async () => {
+		const newBlogWithoutLikesProperty = {
+			title: 'Blog title!',
+			author: 'Blog author!',
+			url: 'www.blog&author.com'
+		}
+
+		expect(newBlogWithoutLikesProperty.likes).not.toBeDefined()
+
+		const hasLikesProperty = (response) => {
+			expect(response.body.likes).toBeDefined()
+		}
+
+		await api
+			.post('/api/blogs')
+			.send(newBlogWithoutLikesProperty)
+			.expect(201)
+			.expect('Content-Type', /application\/json/)
+			.expect(hasLikesProperty)
 	})
 })
 
