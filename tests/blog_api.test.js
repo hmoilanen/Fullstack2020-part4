@@ -31,6 +31,27 @@ describe('about blogs', () => {
 		expect(blog.toJSON().id).toBeDefined()
 		expect(blog.toJSON()._id).not.toBeDefined()
 	})
+
+	test('posting a blog successfully adds one in db', async () => {
+		const newBlog = {
+			title: 'XXX',
+			author: 'YYY',
+			url: 'www.xyz.com',
+			likes: 420
+		}
+
+		await api
+			.post('/api/blogs', )
+			.send(newBlog)
+			.expect(201)
+			.expect('Content-Type', /application\/json/)
+
+		const response = await api.get('/api/blogs')
+		const titles = response.body.map(blog => blog.title)
+
+		expect(titles).toHaveLength(helper.initialBlogs.length + 1)
+		expect(titles).toContain(newBlog.title)
+	})
 })
 
 afterAll(() => {
