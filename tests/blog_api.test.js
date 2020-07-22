@@ -85,6 +85,19 @@ describe('about blogs', () => {
 			.send(newBlogWithoutTitleAndAuthor)
 			.expect(400)
 	})
+
+	test('confirm the blog is successfully deleted from db', async () => {
+		const allBlogs = await helper.allBlogs()
+
+		await api
+			.del(`/api/blogs/${allBlogs[0].id}`)
+			.expect(204)
+
+		const blogsAfterDelete = await helper.allBlogs()
+
+		expect(blogsAfterDelete).toHaveLength(allBlogs.length - 1)
+
+	})
 })
 
 afterAll(() => {

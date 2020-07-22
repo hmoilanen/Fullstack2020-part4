@@ -7,7 +7,7 @@ GET http://localhost:3003/api/blogs HTTP/1.1
 //GET http://localhost:3003/api/blogs/1 HTTP/1.1
 
 ### Delete certain blog of the blog-app by id
-//DELETE http://localhost:3003/api/blogs/1 HTTP/1.1
+DELETE http://localhost:3003/api/blogs/5f18159aa88b9fb5028bc236 HTTP/1.1
 
 ### Add a blog to the blog-app
 POST http://localhost:3003/api/blogs HTTP/1.1
