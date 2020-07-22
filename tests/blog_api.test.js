@@ -54,13 +54,13 @@ describe('about blogs', () => {
 	})
 
 	test('verifying that if blog is missing likes property, it\'ll default to value 0', async () => {
-		const newBlogWithoutLikesProperty = {
+		const newBlogWithoutLikes = {
 			title: 'Blog title!',
 			author: 'Blog author!',
 			url: 'www.blog&author.com'
 		}
 
-		expect(newBlogWithoutLikesProperty.likes).not.toBeDefined()
+		expect(newBlogWithoutLikes.likes).not.toBeDefined()
 
 		const hasLikesProperty = (response) => {
 			expect(response.body.likes).toBeDefined()
@@ -68,10 +68,22 @@ describe('about blogs', () => {
 
 		await api
 			.post('/api/blogs')
-			.send(newBlogWithoutLikesProperty)
+			.send(newBlogWithoutLikes)
 			.expect(201)
 			.expect('Content-Type', /application\/json/)
 			.expect(hasLikesProperty)
+	})
+
+	test('verifying title and author properties are included to the request or 400', async () => {
+		const newBlogWithoutTitleAndAuthor = {
+			url: 'www.blogurl.com',
+			likes: 0
+		}
+		
+		await api
+			.post('/api/blogs')
+			.send(newBlogWithoutTitleAndAuthor)
+			.expect(400)
 	})
 })
 
