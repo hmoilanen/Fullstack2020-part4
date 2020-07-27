@@ -3,14 +3,6 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
-const getTokenFrom = request => {
-	const authorization = request.get('authorization')
-	if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-		return authorization.substring(7)
-	}
-	return null
-}
-
 blogsRouter.get('/', async (request, response, next) => {
 	try {
 		const blogs = await Blog.find({})
@@ -32,7 +24,7 @@ blogsRouter.get('/', async (request, response, next) => {
 
 blogsRouter.post('/', async (request, response, next) => {
 	const body = request.body
-	const token = getTokenFrom(request)
+	const token = request.token
 	const decodedToken = !token
 		? false
 		: jwt.verify(token, process.env.SECRET)
