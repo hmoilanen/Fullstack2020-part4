@@ -5,20 +5,21 @@ const User = require('../models/user')
 usersRouter.get('/', async (request, response, next) => {
 	try {
 		const users = await User.find({})
+			.populate('blogs', { title: 1, author: 1, url: 1, id: 1 })
 		response.json(users)
 	} catch(exception) {
 		next(exception)
 	}
 })
 
-usersRouter.delete('/', async (request, response, next) => {
+/* usersRouter.delete('/', async (request, response, next) => {
 	try {
 		await User.deleteMany({})
 		response.status(204)
 	} catch(exception) {
 		next(exception)
 	}
-})
+}) */
 
 usersRouter.post('/', async (request, response, next) => {
 	const body = request.body
