@@ -1,6 +1,15 @@
+const jwt = require('jsonwebtoken')
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+
+const getTokenFrom = request => {
+	const authorization = request.get('authorization')
+	if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+		return authorization.substring(7)
+	}
+	return null
+}
 
 blogsRouter.get('/', async (request, response, next) => {
 	try {
@@ -22,31 +31,33 @@ blogsRouter.get('/', async (request, response, next) => {
 }) */
 
 blogsRouter.post('/', async (request, response, next) => {
-	const blog = new Blog(request.body)
+	const body = request.body
+	const token = getTokenFrom(request)
+	const decodedToken = !token
+		? false
+		: jwt.verify(token, process.env.SECRET)
 
-	if (!blog.title || !blog.author) {
-		response.status(400)
-		next({
-			message: 'A blog must include title and author!',
-			name: 'ValidationError'
-		})
-	} else {
-		try {
-			const users = await User.find({})
-			const randomUser = users[Math.floor(Math.random() * users.length)]
-			
-			blog.user = randomUser._id
-			
-			const savedBlog = await blog.save()
+	if (!token || !decodedToken.id) {
+		return response.status(401).json({ error: 'token missing or invalid' })
+	}
 
-			randomUser.blogs = randomUser.blogs.concat(savedBlog._id)
+	const user = await User.findById(decodedToken.id)
 
-			await randomUser.save()
+	const blog = new Blog({
+		title: body.title,
+		author: body.author,
+		url: body.url === undefined ? '' : body.url,
+		user: user._id
+	})
 
-			response.status(201).json(savedBlog)
-		} catch(exception) {
-			next(exception)
-		}
+	const savedBlog = await blog.save()
+	user.blogs = user.blogs.concat(savedBlog._id)
+	await user.save()
+
+	try {
+		response.json(savedBlog)
+	} catch(exception) {
+		next(exception)
 	}
 })
 
